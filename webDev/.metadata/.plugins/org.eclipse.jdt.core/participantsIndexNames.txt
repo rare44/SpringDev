@@ -1,0 +1,5 @@
+INDEX VERSION 1.131
+C:\java\webDev\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2447438484.index
+\SpringShop\src\main\java
+C:\java\webDev\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3453638837.index
+\SpringShop\src\main\java

@@ -1,0 +1,11 @@
+package com.spring.shop.gallery;
+
+import java.util.Map;
+
+import com.spring.shop.notice.Notice;
+
+public interface GalleryMapper {
+	public abstract int writeGallery(Gallery g);
+
+	public abstract Map<String, Object> getGalleryList(Map<String, Object> param);
+}

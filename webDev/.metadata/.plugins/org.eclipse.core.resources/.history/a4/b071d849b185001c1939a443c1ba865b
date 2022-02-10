@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.shop.gallery.GalleryMapper">
+	<insert id="writeGallery" parameterType="com.spring.shop.gallery.Gallery" useGeneratedKeys="true" keyProperty="gi_no">
+		insert into gallery_info(
+			gi_no,
+			gi_title,
+			gi_content,
+			gi_writer
+		)values(
+			nextval('seq_gi_no'),
+			#{gi_title},
+			#{gi_content},
+			#{gi_writer}
+		)
+	
+	
+	</insert>
+
+	<select id="getGalleryList" parameterType="hashmap" resultType="com.spring.shop.Gallery">
+		select gi_no,
+				gi_title,
+				gi_writer,
+				TO_CHAR(TO_TIMESTAMP(ni_insdate, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') "gi_insdate"
+		from gallery_info
+		order by gi_no desc
+	
+	</select>
+</mapper>

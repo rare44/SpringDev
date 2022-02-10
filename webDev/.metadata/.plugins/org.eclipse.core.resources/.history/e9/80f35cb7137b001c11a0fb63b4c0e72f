@@ -1,0 +1,29 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+
+          <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="username" class="form-label">아이디</label>
+                        <div class="input-group has-validation">
+                         
+                            <input type="text" class="form-control" name="mi_id" id="username" placeholder="아이디" value="${loginMember.mi_id }">
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="lastName" class="form-label">중복체크</label>
+                            <button class="w-100 btn btn-primary btn-lg" id="checkID" type="button">중복체크</button>
+                        </div>
+                    </div>
+            
+                  <div class="col-12">
+	              <label for="username" class="form-label">비밀번호</label>
+		              <div class="input-group has-validation">		          
+			                <input type="password" class="form-control" id="pw" name="mi_pw" placeholder="Password" value="${loginMember.mi_pw }" required>
+			              <div class="invalid-feedback">
+			                  Your username is required.
+		                </div>
+	              </div>
+            
+<a href="/notice/write" class="w-49 btn btn-lg btn-primary" type="button">글쓰기</button>
+</div>

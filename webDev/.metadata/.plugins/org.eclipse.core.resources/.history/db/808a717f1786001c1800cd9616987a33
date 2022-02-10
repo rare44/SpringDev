@@ -1,0 +1,10 @@
+package com.spring.shop.notice;
+
+import org.springframework.web.servlet.view.AbstractView;
+
+public class FileDownload extends AbstractView{
+	public void Download() {
+		setContentType("aplication/download; utf-8");
+		
+	}
+}

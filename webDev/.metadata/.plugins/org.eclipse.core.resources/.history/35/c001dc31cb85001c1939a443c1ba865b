@@ -1,0 +1,38 @@
+package com.spring.shop.gallery;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.spring.shop.notice.Notice;
+
+public interface GalleryMapper {
+	public abstract int writeGallery(Gallery g);
+
+	
+
+	public abstract int getTotalCnt(Map<String, Object> param);
+
+
+
+	public abstract List<Notice> getGalleryList(Map<String, Object> param);
+
+
+
+	public abstract int updateOne(int no);
+
+
+
+	public abstract int detailWrite(Gallery g);
+
+
+
+	public abstract int deleteOne(HttpServletRequest req);
+
+
+
+	public abstract Gallery selectOne(int no);
+
+
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.shop.gallery.GalleryMapper">
+	<insert id="writeGallery" parameterType="com.spring.shop.gallery.Gallery" useGeneratedKeys="true" keyProperty="gi_no">
+		insert into gallery_info(
+			gi_no,
+			gi_title,
+			gi_content,
+			gi_writer
+		)values(
+			nextval('seq_gi_no'),
+			#{gi_title},
+			#{gi_content},
+			#{gi_writer}
+		)
+	
+	
+	</insert>
+
+<select id="getGalleryList" parameterType="hashmap" resultType="com.spring.shop.gallery.Gallery">
+		select 
+				gi_no,
+				gi_title,
+				gi_writer,
+				TO_CHAR(TO_TIMESTAMP(gi_insdate, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') "gi_insdate" 
+ 		  from gallery_info
+ 		  <include refid="search"/>
+ 		  order by gi_no desc
+ 		  limit #{li} - #{off} offset #{off}
+ 		  
+ 		  
+	</select>
+	
+	<select id="getTotalCnt" parameterType="hashmap" resultType="int">
+		select count(*)
+		  from gallery_info
+		  <include refid="search" />
+	</select>
+	<sql id="search">
+		<where>
+			<choose>
+				<when test="searchType == 'all'">
+					 gi_title ILIKE '%'||#{keyword}||'%' OR gi_content ILIKE '%'||#{keyword}||'%' or gi_writer ILIKE '%'||#{keyword}||'%'
+				</when>
+				<otherwise>
+					${searchType} ILIKE '%'||#{keyword}||'%'
+				</otherwise>
+			
+			</choose>
+		</where>
+		 
+	</sql>
+	
+	
+	
+	<update id="updateOne" parameterType="com.spring.shop.gallery.Gallery">
+			update gallery_info
+				set gi_title = #{gi_title},
+			   		gi_content = #{gi_content}
+			 where gi_no = #{gi_no}
+	</update>
+	<delete id="deleteOne" parameterType="int">
+		delete from gallery_info
+		 where gi_no = #{no}
+	</delete>
+	
+	<select id="selectOne" parameterType="int" resultType="com.spring.shop.gallery.Gallery">
+		select 
+			gi_no,
+			gi_title,
+			gi_content, 
+			gi_writer,
+			TO_CHAR(TO_TIMESTAMP(gi_insdate, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') "gi_insdate"
+		  from gallery_info
+		 where gi_no = #{no}
+	</select>
+	
+	<insert id="insertAttach" parameterType="list">
+		insert into board_attach(board_type, board_id, file_num, file_name, saved_file_name, file_size)
+		  values
+		  <foreach collection="list" item="f"></foreach>
+		  (
+		  'Gallery',
+		  #{boardid},
+		  nextval('seq_file_num'),
+		  #{filename},
+		  #{savedfilename},
+		  #{size}
+		  )
+	
+	
+	</insert>
+	
+</mapper>

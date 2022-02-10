@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.shop.notice.NoticeMapper">
+	<insert id="writeNotice" parameterType="com.spring.shop.notice.Notice" useGeneratedKeys="true" keyProperty="ni_no">
+		insert into notice_info(
+			ni_no,
+			ni_title,
+			ni_content ,
+			ni_writer
+			
+		)values(
+			nextval('seq_ni_no'),
+			#{ni_title},
+			#{ni_content},
+			#{ni_writer}
+		)
+	</insert>
+	<select id="getList" parameterType="hashmap" resultType="com.spring.shop.notice.Notice">
+		select 
+				ni_no,
+				ni_title,
+				ni_writer,
+				TO_CHAR(TO_TIMESTAMP(ni_insdate, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') "ni_insdate" 
+ 		  from notice_info
+ 		  <include refid="search"/>
+ 		  order by ni_no desc
+ 		  limit #{li} - #{off} offset #{off}
+ 		  
+ 		  
+	</select>
+	<select id="selectOne" parameterType="int" resultType="com.spring.shop.notice.Notice">
+		select 
+			a.ni_no,
+			a.ni_title,
+			a.ni_content, 
+			a.ni_writer,
+			TO_CHAR(TO_TIMESTAMP(a.ni_insdate, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') "ni_insdate",
+			b.file_name,
+			b.saved_file_name
+		  from notice_info a left outer join board_attach b on a.ni_no = b.board_id
+		 where a.ni_no = #{no}
+	</select>
+	<update id="updateOne" parameterType="com.spring.shop.notice.Notice">
+			update notice_info
+				set ni_title = #{ni_title},
+			   		ni_content = #{ni_content}
+			 where ni_no = #{ni_no}
+	</update>
+	
+	
+	<delete id="deleteOne" parameterType="com.spring.shop.notice.Notice">
+		delete from notice_info
+		 where ni_no = #{ni_no}
+	</delete>
+	
+	<delete id="deleteAttach" parameterType="com.spring.shop.notice.Notice">
+		delete from board_attach
+		where board_id = #{ni_no}
+	</delete>
+	<select id="getTotalCnt" parameterType="hashmap" resultType="int">
+		select count(*)
+		  from notice_info
+		  <include refid="search" />
+	</select>
+	<sql id="search">
+		<where>
+			<choose>
+				<when test="searchType == 'all'">
+					 gi_title ILIKE '%'||#{keyword}||'%' OR gi_content ILIKE '%'||#{keyword}||'%' or gi_writer ILIKE '%'||#{keyword}||'%'
+				</when>
+				<otherwise>
+					${searchType} ILIKE '%'||#{keyword}||'%'
+				</otherwise>
+			
+			</choose>
+		</where>
+		 
+	</sql>
+	<insert id="insertAttach" parameterType="hashmap">
+		insert into board_attach(board_type, board_id, file_num, file_name, saved_file_name, file_size)
+		  values('notice',#{boardid},nextval('seq_file_num'),#{filename},#{savedfilename},#{size})
+	
+	
+	</insert>
+	
+</mapper>
