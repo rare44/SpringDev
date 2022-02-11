@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.shop.gallery.GalleryMapper">
+	<insert id="writeGallery" parameterType="com.spring.shop.gallery.Gallery" useGeneratedKeys="true" keyProperty="gi_no">
+		insert into gallery_info(
+			gi_no,
+			gi_title,
+			gi_content,
+			gi_writer
+		)values(
+			nextval('seq_gi_no'),
+			#{gi_title},
+			#{gi_content},
+			#{gi_writer}
+		)
+	
+	
+	</insert>
+
+<select id="getGalleryList" parameterType="hashmap" resultType="com.spring.shop.gallery.Gallery">
+
+ 		  
+		SELECT 
+		    gi.gi_no,
+		    gi.gi_title,
+		    gi.gi_writer,
+		    TO_CHAR(TO_TIMESTAMP(gi.gi_insdate , 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI' )"gi_insdate",
+		    ba.saved_file_name ,
+		    ba.file_name 
+		FROM gallery_info gi left outer JOIN board_attach ba 
+		ON gi.gi_no = ba.board_id and file_num = (
+												select file_num from board_attach b
+												 where b.board_id = gi.gi_no 
+												   and b.board_type = 'Gallery'
+												 limit 1
+												)
+		<include refid="search"/>										
+		ORDER BY gi.gi_no desc
+		limit #{li} - #{off} offset #{off}
+	</select>
+	
+	<select id="getTotalCnt" parameterType="hashmap" resultType="int">
+		select count(*)
+		  from gallery_info
+		  <include refid="search" />
+	</select>
+	<sql id="search">
+		<where>
+			<choose>
+				<when test="searchType == 'all'">
+					 gi_title ILIKE '%'||#{keyword}||'%' OR gi_content ILIKE '%'||#{keyword}||'%' or gi_writer ILIKE '%'||#{keyword}||'%'
+				</when>
+				<otherwise>
+					${searchType} ILIKE '%'||#{keyword}||'%'
+				</otherwise>
+			
+			</choose>
+		</where>
+		 
+	</sql>
+	
+	
+	
+	<update id="updateOne" parameterType="com.spring.shop.gallery.Gallery">
+			update gallery_info
+				set gi_title = #{gi_title},
+			   		gi_content = #{gi_content}
+			 where gi_no = #{gi_no}
+	</update>
+	<delete id="deleteOne" parameterType="int">
+		delete from gallery_info
+		 where gi_no = #{no}
+	</delete>
+	
+	<delete id="deleteImg" parameterType="String">
+		delete from board_attach
+		 where saved_file_name = #{name}
+	
+	</delete>
+	
+	<select id="selectOne" parameterType="int" resultType="com.spring.shop.gallery.Gallery">
+	      select a.gi_no
+	   		, a.gi_title
+	   		, a.gi_content
+	   		, a.gi_writer 
+			, TO_CHAR(TO_TIMESTAMP(a.gi_insdate, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') "gi_insdate" 
+			, b.file_name
+			, b.saved_file_name 
+	     from gallery_info a left outer join board_attach b on a.gi_no = b.board_id
+	     												   and b.board_type = 'Gallery'
+		 where a.gi_no = #{no};
+	</select>
+	
+	<insert id="insertAttach" parameterType="list">
+		insert into board_attach(board_type, board_id, file_num, file_name, saved_file_name, file_size
+		)values
+		  <foreach collection="list" item="f" separator="," >
+			    (
+			  'Gallery',
+			  #{f.boardid},
+			  nextval('seq_file_num'),
+			  #{f.filename},
+			  #{f.savedfilename},
+			  #{f.size}
+			  )
+		  </foreach>
+	</insert>
+	
+	<delete id="deleteAttach" parameterType="int">
+		delete from board_attach
+		where board_id = #{imgNo}
+	
+	</delete>
+	
+</mapper>

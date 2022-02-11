@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.shop.login.MemberMapper">
+	<insert id="joinMember" parameterType="com.spring.shop.login.Member">
+		insert into member_info
+		 (
+			mi_id,
+			mi_pw,
+			mi_name,
+			mi_birthday,
+			mi_email,
+			mi_mobile,
+			<if test="mi_tell != ''">
+				mi_tell,
+			</if>
+			mi_address 
+		 )values(
+			#{mi_id},
+			#{mi_pw},
+			#{mi_name},
+			#{mi_birthday},
+			#{mi_email},
+			#{mi_mobile},
+			<if test="mi_tell != ''">
+				#{mi_tell},
+			</if>
+			#{mi_address}
+		 );
+		
+	</insert>
+	<select id="checkID" parameterType="String" resultType="int">
+		select count(*)
+		 from member_info
+		where mi_id = #{mi_id}
+		
+	</select>
+	
+	<select id="getMemberByID" parameterType="com.spring.shop.login.Member" resultType="com.spring.shop.login.Member">
+		select *
+  		  from member_info
+		 where mi_id = #{mi_id} and mi_pw = #{mi_pw}
+	</select>
+	
+</mapper>
